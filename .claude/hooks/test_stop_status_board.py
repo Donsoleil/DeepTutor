@@ -20,11 +20,9 @@ Ship the thing
 SYSTEM STATE
 ███████████████░░░░░  75%
 
-Active agents          0
 Completed tasks        9
 Blocked                0
 Needs judgment         0
-High-risk actions      0
 ```"""
 
 NO_BOARD = "Here is the answer in prose, and nothing else."
