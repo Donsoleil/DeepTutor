@@ -33,6 +33,12 @@ here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 rule_src="$here/rules/response-footer.md"
 skill_src="$here/simplysaid.md"   # payload, not an installed skill (see below)
 
+# A literal tilde held in a variable, because the replacement half of
+# ${var/#pat/rep} is tilde-expanded: a bare ~ turns back into $HOME, and the
+# \~ that stops that on bash 5 is left as a literal backslash by the bash 3.2
+# that ships with macOS. A variable needs no escape and is right on both.
+TILDE='~'
+
 BEGIN="<!-- BEGIN status-board (managed by install-all-harnesses.sh) -->"
 END="<!-- END status-board -->"
 
@@ -61,10 +67,10 @@ targets=(
 
 if [ "$mode" = "list" ]; then
   printf '%-16s %-40s %s\n' "HARNESS" "PROBE (must exist)" "WOULD WRITE"
-  printf '%-16s %-40s %s\n' "Claude Code" "$HOME/.claude" "rule + hook + settings.json + skill"
+  printf '%-16s %-40s %s\n' "Claude Code" "$TILDE/.claude" "rule + hook + settings.json + skill"
   for t in "${targets[@]}"; do
     IFS='|' read -r label probe target <<<"$t"
-    printf '%-16s %-40s %s\n' "$label" "${probe/#$HOME/\~}" "${target/#$HOME/\~}"
+    printf '%-16s %-40s %s\n' "$label" "${probe/#$HOME/$TILDE}" "${target/#$HOME/$TILDE}"
   done
   exit 0
 fi
@@ -116,7 +122,7 @@ drop_if_empty() {
 write_one() {
   local label="$1" target="$2" existed="$3"
   if [ "$mode" = "dry" ]; then
-    printf '  %-16s would write  %s%s\n' "$label" "${target/#$HOME/\~}" "$existed"
+    printf '  %-16s would write  %s%s\n' "$label" "${target/#$HOME/$TILDE}" "$existed"
     return
   fi
   mkdir -p "$(dirname "$target")"
@@ -127,7 +133,7 @@ write_one() {
     printf -- '---\ndescription: Status board footer\nalwaysApply: true\n---\n\n' > "$target"
   fi
   payload >> "$target"
-  printf '  %-16s %s%s\n' "$label" "${target/#$HOME/\~}" "$existed"
+  printf '  %-16s %s%s\n' "$label" "${target/#$HOME/$TILDE}" "$existed"
 }
 
 echo "harnesses found on this machine:"
@@ -152,7 +158,7 @@ if [ -d "$HOME/.claude" ] || [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then
           [ "$sd" = "$HOME/.agents/skills" ] && [ ! -d "$sd" ] && continue
           mkdir -p "$sd/simplysaid"
           cp "$skill_src" "$sd/simplysaid/SKILL.md"
-          printf '  %-16s /simplysaid -> %s\n' "" "${sd/#$HOME/\~}/simplysaid/SKILL.md"
+          printf '  %-16s /simplysaid -> %s\n' "" "${sd/#$HOME/$TILDE}/simplysaid/SKILL.md"
         done
       fi
       ;;
@@ -172,9 +178,9 @@ for t in "${targets[@]}"; do
   if [ "$mode" = "uninstall" ]; then
     strip_block "$target"
     if drop_if_empty "$target"; then
-      printf '  %-16s block removed from %s\n' "$label" "${target/#$HOME/\~}"
+      printf '  %-16s block removed from %s\n' "$label" "${target/#$HOME/$TILDE}"
     else
-      printf '  %-16s removed %s (nothing else was in it)\n' "$label" "${target/#$HOME/\~}"
+      printf '  %-16s removed %s (nothing else was in it)\n' "$label" "${target/#$HOME/$TILDE}"
     fi
     continue
   fi
