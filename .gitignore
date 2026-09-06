@@ -18,6 +18,7 @@ deeptutor/services/rag/eg_only_for_analysis/
 # directory, so a negation under it would never match.)
 .claude/*
 !.claude/rules/
+!.claude/hooks/
 !.claude/install-response-footer.sh
 .agents/
 
