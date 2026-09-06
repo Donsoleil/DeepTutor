@@ -75,7 +75,7 @@ Shape rules:
 | row | counts |
 |---|---|
 | `Active agents` | subagents or background tasks running **right now**. Usually 0. |
-| `Completed tasks` | tracked items at `✓`. A `⚠` does not count. |
+| `Completed tasks` | tracked items at `✓`, **cumulative for the session**. A `⚠` does not count. It does not shrink when a finished item leaves the tree (rule 4) — the counters are the running total, the tree is the current picture. |
 | `Blocked` | tracked items at `⊘`. |
 | `Needs judgment` | items listed under `NEEDS YOU`. The two must agree. |
 | `High-risk actions` | pending actions that are irreversible or outward-facing: a production migration, a push to a protected branch, real money, real children's data, anything sent outside. |
@@ -89,11 +89,14 @@ Shape rules:
    exists. Code written but never executed is `⚠`. This is the whole point of the
    board — a wall of unverified `✓` marks is the exact defect these repos already
    track (`docs/RECURRING_DEFECTS.md`): a claim nothing checks.
-3. **The percentage is derived**, `Completed tasks / total tracked`, not a
-   feeling. Nothing tracked means no bar and no percentage — drop those two lines
-   and say what happened in words.
-4. **Live state, not a log.** Finished items leave the board once they are
-   reported. It shows the current picture, not everything ever done.
+3. **The percentage is derived**, `Completed tasks / total tracked` across the
+   session, not a feeling. Nothing tracked means no bar and no percentage — drop
+   those two lines and say what happened in words. The percentage never falls
+   because items left the tree; it falls only when new work is found.
+4. **The TREE is live state, not a log.** Finished items leave it once they have
+   been reported, so it shows what is happening now rather than everything ever
+   done. This governs the tree only — the counters above it keep the session
+   total, which is why a short tree can sit under a high count.
 5. **`NEEDS YOU` is expensive — keep it true.** An item belongs there only if it
    is (a) a real fork no written policy resolves, (b) irreversible or
    outward-facing, or (c) a fact only the human has. Anything answerable from the
