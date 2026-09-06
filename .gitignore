@@ -20,6 +20,9 @@ deeptutor/services/rag/eg_only_for_analysis/
 !.claude/rules/
 !.claude/hooks/
 !.claude/install-response-footer.sh
+!.claude/install-all-harnesses.sh
+!.claude/ADD-STATUS-BOARD.md
+!.claude/simplysaid.md
 .agents/
 
 # LaTeX build artifacts
