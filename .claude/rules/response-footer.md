@@ -108,15 +108,43 @@ Shape rules:
    receipt is written first and the board summarizes it. If they disagree, the
    receipt is right and the board is wrong.
 
+## Two layers: this file asks, the hook enforces
+
+This file is **context**, not configuration. Claude Code's own docs are explicit
+that CLAUDE.md and rules shape behaviour but are not an enforcement layer, and
+the failure is measurable: in a session with 424k tokens of conversation, a 4k
+rule is outvoted. The board stops appearing and nothing reports that it stopped.
+
+So there are two layers, and they do different jobs.
+
+| | what it is | what it does |
+|---|---|---|
+| `.claude/rules/response-footer.md` | this file, loaded every session | **asks** for the board, and is the full spec |
+| `.claude/hooks/stop-status-board.py` | a `Stop` hook | **a turn cannot end** until the reply carries the board |
+
+The hook re-prompts with the board skeleton inline, so it also works in a
+session where this file never loaded. It fails open on every unexpected
+condition — unparseable input, a missing transcript, an exhausted retry budget
+— because a hook that traps a session is worse than no hook. It re-prompts at
+most twice per turn.
+
 ## Where this is installed
 
-- **This repo** — `.claude/rules/response-footer.md`, loaded at the start of every
-  session here, including cloud and CI sessions.
-- **Every project on a machine** — copy it to `~/.claude/rules/response-footer.md`.
-  Run `bash .claude/install-response-footer.sh` from the repo root; it is
-  idempotent and re-run to update.
+- **This repo** — `.claude/rules/response-footer.md`, loaded at the start of
+  every session here, including cloud and CI sessions.
+- **Every project on a machine** — `bash .claude/install-response-footer.sh`
+  from the repo root. It copies the rule to `~/.claude/rules/`, the hook to
+  `~/.claude/hooks/`, registers the hook in `~/.claude/settings.json` under
+  `hooks.Stop` without disturbing anything already there (it backs the file up
+  first), and then proves the hook actually blocks a board-less reply before it
+  reports success. Idempotent; re-run it to update. `--rule-only` skips the
+  hook.
 
 There is no account-wide setting that pushes this to every machine — Claude Code
-memory and rules are per-machine and per-repo. The installer covers a machine;
-committing this file covers a repo everywhere it is cloned. Run the installer
-once on each machine you work from.
+memory, rules and hooks are per-machine and per-repo. The installer covers a
+machine; committing these files covers a repo everywhere it is cloned. Run the
+installer once on each machine you work from.
+
+Behaviour tests for the hook: `python3 .claude/hooks/test_stop_status_board.py`.
+Ten cases, including every fail-open path. No CI here runs them; the installer's
+own self-test is the check that runs every time.
