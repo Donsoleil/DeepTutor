@@ -52,11 +52,9 @@ MISSION
 SYSTEM STATE
 ███████████████░░░░░  75%
 
-Active agents          0
 Completed tasks        0
 Blocked                0
 Needs judgment         0
-High-risk actions      0
 
 ────────────────────────
 
@@ -78,7 +76,9 @@ NEEDS YOU
 
 Rules that decide what goes in it:
 - Never invent a number. Counters come from real session state. Zero is a true
-  value and is shown; all five counter rows always appear.
+  value and is shown; all three counter rows always appear.
+- Running subagents get a named row each in an `Agents` group in the tree, not a
+  count. Irreversible or outward-facing work goes under NEEDS YOU, not a count.
 - `✓` means done AND verified, with the evidence named. Code written but never
   run is `⚠`, never `✓`.
 - The percentage is derived, completed / total tracked. Nothing tracked means
