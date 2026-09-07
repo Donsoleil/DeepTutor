@@ -13,16 +13,7 @@ deeptutor/agents/question/reference_papers/
 deeptutor/services/rag/eg_only_for_analysis/
 /docs/
 /site/
-# Local Claude Code state stays out; the shared agent rules are tracked.
-# (`.claude/*` not `.claude` — git will not descend into an excluded
-# directory, so a negation under it would never match.)
-.claude/*
-!.claude/rules/
-!.claude/hooks/
-!.claude/install-response-footer.sh
-!.claude/install-all-harnesses.sh
-!.claude/ADD-STATUS-BOARD.md
-!.claude/simplysaid.md
+.claude
 .agents/
 
 # LaTeX build artifacts
