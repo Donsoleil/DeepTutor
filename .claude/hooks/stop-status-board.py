@@ -33,6 +33,15 @@ import tempfile
 # happens to say "mission" does not satisfy the gate.
 MARKERS = ("MISSION", "SYSTEM STATE")
 
+# The deliberate opt-out. A turn that exists only because something woke the
+# tool -- a bot comment, a deploy notice, a scheduled poll, an event already
+# handled -- has nothing for a human, and a board repeating last turn's counters
+# costs more attention than it earns. Rule 8 says answer those in one line
+# starting with this, and the gate honours it so the rule and the hook cannot
+# teach opposite things. Anchored to the start of a line and case-sensitive, so
+# prose cannot trip it by accident.
+OPTOUT = re.compile(r"^NO BOARD\s*[-\u2014]", re.MULTILINE)
+
 # Re-prompts per turn. Deliberately below the CLI's global 8-block ceiling so a
 # model that will not comply still gets to stop.
 CAP = 2
@@ -89,8 +98,12 @@ Rules that decide what goes in it:
   That is the normal state.
 - Use the `────` separators shown, only between sections, never at the top or
   bottom. The fence is the frame.
-- One board per reply, always last, exactly once. Never two in a message and
+- One board per reply, always last, exactly once. Never two in a message, and
   never a second copy of the same state in the next one.
+- A reply with nothing for a human -- a bot comment, a deploy notice, a
+  scheduled poll, an event already handled -- gets NO board. Answer it in one
+  line starting `NO BOARD -- ` instead. That is the only way past this gate,
+  and it is deliberate.
 
 The full spec, if this repo has it, is `.claude/rules/response-footer.md`."""
 
@@ -174,8 +187,8 @@ def boundary_index(entries):
 
 
 def has_board(entries, start):
-    """True when a main-loop assistant text block this turn contains a fenced
-    block carrying both markers."""
+    """True when a main-loop assistant text block this turn carries a fenced
+    block with both markers, or the explicit `NO BOARD -- ` opt-out."""
     for e in entries[start + 1 :]:
         if e.get("type") != "assistant" or e.get("isSidechain"):
             continue
@@ -185,7 +198,10 @@ def has_board(entries, start):
         for blk in content:
             if not isinstance(blk, dict) or blk.get("type") != "text":
                 continue
-            for fenced in FENCE.findall(blk.get("text") or ""):
+            text = blk.get("text") or ""
+            if OPTOUT.search(text):
+                return True
+            for fenced in FENCE.findall(text):
                 if all(m in fenced for m in MARKERS):
                     return True
     return False

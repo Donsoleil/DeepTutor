@@ -130,14 +130,20 @@ counter.
    (Changed / Verified / Not claimed / Blockers / Next), the receipt is written
    first and the board summarizes it. If they disagree, the receipt is right and
    the board is wrong.
-8. **One board per reply — and no reply that only carries a board.** It appears
-   exactly once, as the last thing in the message. Never twice in one message,
-   and never a second copy of the same state in the message straight after. A
-   scheduled check-in, a poll, or any wake-up that finds nothing changed should
-   not produce a reply at all; where the tool forces one, it is a single line
-   naming what did not change, plus the one board. Two boards in a row carrying
-   identical counters teaches the reader to skip the block, which costs more
-   than the block earns.
+8. **One board per reply, and NO board on a reply that has nothing for a human.**
+   It appears exactly once, as the last thing in the message, on a reply that
+   carries substance: an answer, a change, a finding, a question, a blocker.
+
+   A turn that exists only because something woke the tool is not that: a bot
+   comment, a deploy notice, a scheduled poll, an event already handled, a
+   duplicate. Answer those in one line beginning `NO BOARD - ` and stop. Better
+   still, do not reply at all, and do not schedule a wake-up whose likely
+   outcome is "nothing changed".
+
+   Repeating a board with identical counters is WORSE than omitting it. The
+   whole point is to make a human's attention cheaper; six identical blocks in a
+   row make it more expensive, and that has actually happened. When in doubt
+   about whether a reply has substance, it does not.
 
 ### Where to append it
 
