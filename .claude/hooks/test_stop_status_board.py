@@ -27,6 +27,13 @@ Needs judgment         0
 
 NO_BOARD = "Here is the answer in prose, and nothing else."
 
+# Rule 8's deliberate opt-out: a turn with nothing for a human.
+OPTOUT = "NO BOARD — Vercel deploy bot on the PR. Nothing changed."
+OPTOUT_HYPHEN = "NO BOARD - scheduled check found no change."
+# Must NOT satisfy the gate: not at the start of a line, or wrong case.
+OPTOUT_MIDLINE = "I considered whether to write NO BOARD — but here is prose instead."
+OPTOUT_LOWER = "no board — this should not count as the opt-out."
+
 PROSE_ONLY = (
     "The MISSION here is unclear and the SYSTEM STATE is unknown, "
     "but I am not drawing a board."
@@ -93,6 +100,34 @@ def main():
 
     h = fresh()
     check("no board -> block", verdict(run([user(), assistant(NO_BOARD)], h)[1]), "block")
+
+    h = fresh()
+    check(
+        "explicit `NO BOARD —` opt-out -> allow",
+        verdict(run([user(), assistant(OPTOUT)], h)[1]),
+        "allow",
+    )
+
+    h = fresh()
+    check(
+        "opt-out with a plain hyphen -> allow",
+        verdict(run([user(), assistant(OPTOUT_HYPHEN)], h)[1]),
+        "allow",
+    )
+
+    h = fresh()
+    check(
+        "the phrase mid-sentence is NOT the opt-out -> block",
+        verdict(run([user(), assistant(OPTOUT_MIDLINE)], h)[1]),
+        "block",
+    )
+
+    h = fresh()
+    check(
+        "lower-case `no board` is NOT the opt-out -> block",
+        verdict(run([user(), assistant(OPTOUT_LOWER)], h)[1]),
+        "block",
+    )
 
     h = fresh()
     check(

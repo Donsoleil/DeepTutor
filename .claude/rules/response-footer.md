@@ -115,6 +115,24 @@ away — it moved somewhere it reads better:
    (Changed / Verified / Truth layers / Not claimed / Blockers / Next), the
    receipt is written first and the board summarizes it. If they disagree, the
    receipt is right and the board is wrong.
+8. **One board per reply, and NO board on a reply that has nothing for a human.**
+   It appears exactly once, as the last thing in the message, on a reply that
+   carries substance — an answer, a change, a finding, a question, a blocker.
+
+   A turn that exists only because something woke the tool is not that: a bot
+   comment, a deploy notice, a scheduled poll, an event already handled, a
+   duplicate. Answer those in one line beginning `NO BOARD — ` and stop. Better
+   still, do not reply at all, and do not schedule a wake-up whose likely
+   outcome is "nothing changed".
+
+   Repeating a board with identical counters is **worse than omitting it.** The
+   whole point is to make a human's attention cheaper; six identical blocks in a
+   row make it more expensive, and that has actually happened. When in doubt
+   about whether a reply has substance, it does not.
+
+   The `NO BOARD — ` prefix is also what the Stop hook looks for, so the rule and
+   the enforcement agree instead of fighting. It is deliberate and visible; it
+   cannot be reached by accident, and it is the only way past the hook.
 
 ## Two layers: this file asks, the hook enforces
 
