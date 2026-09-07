@@ -130,6 +130,14 @@ counter.
    (Changed / Verified / Not claimed / Blockers / Next), the receipt is written
    first and the board summarizes it. If they disagree, the receipt is right and
    the board is wrong.
+8. **One board per reply — and no reply that only carries a board.** It appears
+   exactly once, as the last thing in the message. Never twice in one message,
+   and never a second copy of the same state in the message straight after. A
+   scheduled check-in, a poll, or any wake-up that finds nothing changed should
+   not produce a reply at all; where the tool forces one, it is a single line
+   naming what did not change, plus the one board. Two boards in a row carrying
+   identical counters teaches the reader to skip the block, which costs more
+   than the block earns.
 
 ### Where to append it
 

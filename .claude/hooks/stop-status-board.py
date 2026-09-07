@@ -89,6 +89,8 @@ Rules that decide what goes in it:
   That is the normal state.
 - Use the `────` separators shown, only between sections, never at the top or
   bottom. The fence is the frame.
+- One board per reply, always last, exactly once. Never two in a message and
+  never a second copy of the same state in the next one.
 
 The full spec, if this repo has it, is `.claude/rules/response-footer.md`."""
 
